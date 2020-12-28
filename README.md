@@ -7,7 +7,7 @@ Usage: btwattch2 [options]
     -a, --addr <addr>                Specify the destination address.
     -n, --interval <second(s)>       Specify the seconds to wait between updates.
     -W, --timeout <second(s)>        Specify the time to wait for response.
-        --on                         Turn on the power switch
-        --off                        Turn off the power switch
+        --on                         Turn on the power switch.
+        --off                        Turn off the power switch.
 ```
 TBD
