@@ -35,7 +35,7 @@ module BTWATTCH2
         @buf += v
 
         if @buf.size == 31 && @buf[3] == "\x08"
-          yield
+          yield(read_measure)
         end
       end
     end
@@ -63,8 +63,7 @@ module BTWATTCH2
     end
 
     def measure
-      subscribe_measure! do
-        e = read_measure
+      subscribe_measure! do |e|
         puts "V = #{e[:voltage]}, A = #{e[:ampere]}, W = #{e[:wattage]}"
       end
 

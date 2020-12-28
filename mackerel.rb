@@ -13,8 +13,7 @@ if cli.addr.nil? || @name.nil?
 end
 
 conn = BTWATTCH2::Connection.new(cli)
-conn.subscribe_measure! do
-  e = conn.read_measure
+conn.subscribe_measure! do |e|
   puts "#{@name}.voltage\t#{e[:voltage]}\t#{e[:timestamp].to_i}"
   puts "#{@name}.ampere\t#{e[:ampere]}\t#{e[:timestamp].to_i}"
   puts "#{@name}.wattage\t#{e[:wattage]}\t#{e[:timestamp].to_i}"
