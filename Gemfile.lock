@@ -1,0 +1,17 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    ble (1.0.0)
+      concurrent-ruby
+      ruby-dbus
+    concurrent-ruby (1.1.7)
+    ruby-dbus (0.16.0)
+
+PLATFORMS
+  armv7l-linux-eabihf
+
+DEPENDENCIES
+  ble
+
+BUNDLED WITH
+   2.2.2
