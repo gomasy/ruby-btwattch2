@@ -64,7 +64,7 @@ module BTWATTCH2
         write!(PAYLOAD_MONITORING)
         sleep @cli.interval
       end
-    rescue DBus::Error, Timeout::Error => e
+    rescue DBus::Error => e
       STDERR.puts "[ERR] #{e}"
       sleep @cli.interval
       connect!
