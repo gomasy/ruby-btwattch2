@@ -3,6 +3,7 @@ require "optparse"
 module BTWATTCH2
   class CLI
     attr_reader :index, :addr, :interval, :timeout, :switch
+    attr_accessor :conn
 
     def initialize
       @opt = OptionParser.new
@@ -17,28 +18,26 @@ module BTWATTCH2
       @index = 0 if @index.nil?
       @interval = 1 if @interval.nil?
       @timeout = 3 if @timeout.nil?
-
-      if !@addr.nil?
-        @conn = Connection.new(self)
-        main
-      else
-        help
-      end
     end
 
     def help
       puts @opt
     end
 
-    private
     def main
+      @conn = BTWATTCH2::Connection(self)
+      @conn.connect!
+
       if @switch.nil?
         @conn.measure
       else
-        @conn.connect!
         eval("@conn.#{@switch}")
-        @conn.disconnect!
       end
+
+      @conn.disconnect!
+    rescue SignalException
+      @conn.disconnect!
+      exit
     end
   end
 end

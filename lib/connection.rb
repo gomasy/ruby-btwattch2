@@ -1,15 +1,15 @@
 require "ble"
 require "date"
 
-SERVICE = "6e400001-b5a3-f393-e0a9-e50e24dcca9e"
-C_TX = "6e400002-b5a3-f393-e0a9-e50e24dcca9e"
-C_RX = "6e400003-b5a3-f393-e0a9-e50e24dcca9e"
-
-PAYLOAD_MONITORING = "\xAA\x00\x01\x08\xB3"
-PAYLOAD_TURN_ON = "\xAA\x00\x02\xA7\x01\x59"
-PAYLOAD_TURN_OFF = "\xAA\x00\x02\xA7\x00\xDC"
-
 module BTWATTCH2
+  SERVICE = "6e400001-b5a3-f393-e0a9-e50e24dcca9e"
+  C_TX = "6e400002-b5a3-f393-e0a9-e50e24dcca9e"
+  C_RX = "6e400003-b5a3-f393-e0a9-e50e24dcca9e"
+
+  PAYLOAD_MONITORING = "\xAA\x00\x01\x08\xB3"
+  PAYLOAD_TURN_ON = "\xAA\x00\x02\xA7\x01\x59"
+  PAYLOAD_TURN_OFF = "\xAA\x00\x02\xA7\x00\xDC"
+
   class Connection
     def initialize(cli)
       @cli = cli
@@ -28,14 +28,14 @@ module BTWATTCH2
       STDERR.puts "[INFO] Disconnected"
     end
 
-    def subscribe!
+    def subscribe_measure!
       @device.subscribe(SERVICE, C_RX) do |v|
         if !@buf.empty? && v.unpack("C*").first == 170
           @buf = ""
         end
         @buf += v
 
-        if @buf.size == 31
+        if @buf.size == 31 && @buf[3].unpack("C*").first == 8
           e = read
           puts "#{e[:voltage]} #{e[:ampere]} #{e[:wattage]}"
         end
@@ -66,8 +66,7 @@ module BTWATTCH2
     end
 
     def measure
-      connect!
-      subscribe!
+      subscribe_measure!
 
       while true do
         write!(PAYLOAD_MONITORING)
@@ -77,9 +76,6 @@ module BTWATTCH2
       STDERR.puts "[ERR] #{e}"
       sleep @cli.interval
       retry
-    rescue SignalException
-      disconnect!
-      exit
     end
 
     def on
