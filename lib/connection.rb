@@ -30,12 +30,12 @@ module BTWATTCH2
 
     def subscribe_measure!
       @device.subscribe(SERVICE, C_RX) do |v|
-        if !@buf.empty? && v.unpack("C*").first == 170
+        if !@buf.empty? && v.unpack("C*")[0] == 170
           @buf = ""
         end
         @buf += v
 
-        if @buf.size == 31 && @buf[3].unpack("C*").first == 8
+        if @buf.size == 31 && @buf[3] == "\x08"
           e = read
           puts "#{e[:voltage]} #{e[:ampere]} #{e[:wattage]}"
         end
@@ -50,9 +50,9 @@ module BTWATTCH2
       date = @buf[23..28].unpack("C*").reverse
 
       {
-        :voltage => @buf[5..11].unpack("I*").first.to_f / (16 ** 6).to_f,
-        :ampere => @buf[11..17].unpack("I*").first.to_f / (32 ** 6).to_f,
-        :wattage => @buf[17..23].unpack("I*").first.to_f / (16 ** 6).to_f,
+        :voltage => @buf[5..11].unpack("I*")[0].to_f / (16 ** 6).to_f,
+        :ampere => @buf[11..17].unpack("I*")[0].to_f / (32 ** 6).to_f,
+        :wattage => @buf[17..23].unpack("I*")[0].to_f / (16 ** 6).to_f,
         :timestamp => DateTime.new(1900 + date[0], date[1] + 1, date[2], date[3], date[4], date[5])
       }
     end
