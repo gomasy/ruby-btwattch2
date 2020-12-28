@@ -43,15 +43,7 @@ module BTWATTCH2
     end
 
     def write!(payload)
-      Timeout.timeout(@cli.timeout) do
-        begin
-          @device.write(SERVICE, C_TX, payload)
-        rescue DBus::Error => e
-          STDERR.puts "[ERR] #{e}"
-          sleep @cli.interval
-          retry
-        end
-      end
+      @device.write(SERVICE, C_TX, payload)
     end
 
     def read
@@ -75,6 +67,7 @@ module BTWATTCH2
     rescue DBus::Error, Timeout::Error => e
       STDERR.puts "[ERR] #{e}"
       sleep @cli.interval
+      connect!
       retry
     end
 
