@@ -1,5 +1,4 @@
 require "ble"
-require "date"
 
 module BTWATTCH2
   SERVICE = "6e400001-b5a3-f393-e0a9-e50e24dcca9e"
@@ -36,39 +35,43 @@ module BTWATTCH2
         @buf += v
 
         if @buf.size == 31 && @buf[3] == "\x08"
-          e = read
-          puts "#{e[:voltage]} #{e[:ampere]} #{e[:wattage]}"
+          yield
         end
       end
     end
 
     def write!(payload)
       @device.write(SERVICE, C_TX, payload)
+    rescue DBus::Error => e
+      if e.name == "org.bluez.Error.Failed"
+        connect!
+        retry
+      end
+    rescue NoMethodError
+      retry
     end
 
-    def read
+    def read_measure
       date = @buf[23..28].unpack("C*").reverse
 
       {
         :voltage => @buf[5..11].unpack("I*")[0].to_f / (16 ** 6).to_f,
         :ampere => @buf[11..17].unpack("I*")[0].to_f / (32 ** 6).to_f,
         :wattage => @buf[17..23].unpack("I*")[0].to_f / (16 ** 6).to_f,
-        :timestamp => DateTime.new(1900 + date[0], date[1] + 1, date[2], date[3], date[4], date[5])
+        :timestamp => Time.new(1900 + date[0], date[1] + 1, date[2], date[3], date[4], date[5])
       }
     end
 
     def measure
-      subscribe_measure!
+      subscribe_measure! do
+        e = read_measure
+        puts "V = #{e[:voltage]}, A = #{e[:ampere]}, W = #{e[:wattage]}"
+      end
 
       while true do
         write!(PAYLOAD_MONITORING)
         sleep @cli.interval
       end
-    rescue DBus::Error => e
-      STDERR.puts "[ERR] #{e}"
-      sleep @cli.interval
-      connect!
-      retry
     end
 
     def on

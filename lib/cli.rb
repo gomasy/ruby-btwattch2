@@ -12,6 +12,8 @@ module BTWATTCH2
       @opt.on("-n", "--interval <second(s)>", "Specify the seconds to wait between updates."){|v|@interval=v.to_i}
       @opt.on("--on", "Turn on the power switch."){|v|@switch="on"}
       @opt.on("--off", "Turn off the power switch."){|v|@switch="off"}
+      yield(@opt) if block_given?
+
       @opt.parse(ARGV)
 
       @index = 0 if @index.nil?
