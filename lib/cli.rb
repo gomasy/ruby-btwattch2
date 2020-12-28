@@ -25,7 +25,7 @@ module BTWATTCH2
     end
 
     def main
-      @conn = BTWATTCH2::Connection(self)
+      @conn = Connection.new(self)
       @conn.connect!
 
       if @switch.nil?
