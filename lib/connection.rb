@@ -51,9 +51,9 @@ module BTWATTCH2
       date = @buf[23..28].unpack("C*").reverse
 
       {
-        :voltage => @buf[5..11].unpack("I*")[0].to_f / (16 ** 6).to_f,
-        :ampere => @buf[11..17].unpack("I*")[0].to_f / (32 ** 6).to_f,
-        :wattage => @buf[17..23].unpack("I*")[0].to_f / (16 ** 6).to_f,
+        :voltage => ulong(@buf[5..10]).to_f / (16 ** 6).to_f,
+        :ampere => ulong(@buf[11..16]).to_f / (32 ** 6).to_f,
+        :wattage => ulong(@buf[17..22]).to_f / (16 ** 6).to_f,
         :timestamp => Time.new(1900 + date[0], date[1] + 1, date[2], date[3], date[4], date[5])
       }
     end
@@ -77,6 +77,15 @@ module BTWATTCH2
     def off
       write!(Payload::off)
       STDERR.puts "[INFO] Power off succeeded"
+    end
+
+    private
+    def ulong(payload)
+      (8 - payload.size).times do
+        payload += "\x00"
+      end
+
+      payload.unpack("Q*")[0]
     end
   end
 end
