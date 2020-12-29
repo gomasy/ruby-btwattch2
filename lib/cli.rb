@@ -1,8 +1,9 @@
 require "optparse"
+require "time"
 
 module BTWATTCH2
   class CLI
-    attr_reader :index, :addr, :interval, :switch
+    attr_reader :index, :addr, :interval, :switch, :time
     attr_accessor :conn
 
     def initialize
@@ -12,6 +13,8 @@ module BTWATTCH2
       @opt.on("-n", "--interval <second(s)>", "Specify the seconds to wait between updates."){|v|@interval=v.to_i}
       @opt.on("--on", "Turn on the power switch."){|v|@switch="on"}
       @opt.on("--off", "Turn off the power switch."){|v|@switch="off"}
+      @opt.on("--set-rtc <time>", "Specify the time to set to RTC."){|v|@time=Time.parse(v)}
+      @opt.on("--set-rtc-now", "Set the current time of this system to RTC."){|v|@time=Time.now}
       yield(@opt) if block_given?
 
       @opt.parse(ARGV)
@@ -26,15 +29,15 @@ module BTWATTCH2
 
     def main
       @conn = Connection.new(self)
-      @conn.connect!
 
-      if @switch.nil?
-        @conn.measure
-      else
+      if !@time.nil?
+        @conn.set_rtc!(@time)
+      elsif !@switch.nil?
         eval("@conn.#{@switch}")
+      else
+        @conn.measure
       end
 
-      @conn.disconnect!
     rescue SignalException
       @conn.disconnect!
       exit

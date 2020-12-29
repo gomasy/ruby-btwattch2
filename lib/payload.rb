@@ -7,6 +7,21 @@ module BTWATTCH2
     TURN_OFF = "\xA7\x00"
 
     class << self
+      def rtc(time)
+        payload = [
+          RTC_TIMER.unpack("C*"),
+          time.sec,
+          time.min,
+          time.hour,
+          time.day,
+          time.mon - 1,
+          time.year - 1900,
+          time.wday
+        ].flatten.pack("C*")
+
+        generate(payload)
+      end
+
       def monitoring
         generate(MONITORING)
       end

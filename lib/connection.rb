@@ -23,6 +23,11 @@ module BTWATTCH2
       STDERR.puts "[INFO] Disconnected"
     end
 
+    def set_rtc!(time)
+      write!(Payload::rtc(time))
+      STDERR.puts "[INFO] RTC set succeeded"
+    end
+
     def subscribe_measure!
       @device.subscribe(SERVICE, C_RX) do |v|
         if !@buf.empty? && v.unpack("C*")[0] == 170
