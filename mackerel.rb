@@ -1,5 +1,7 @@
-require "./lib/cli.rb"
-require "./lib/connection.rb"
+require "./lib/cli"
+require "./lib/payload"
+require "./lib/connection"
+require "./lib/crc8"
 
 cli = BTWATTCH2::CLI.new do |opt|
   opt.on("--metric-name <name>", "Specify the metric name.") do |v|
@@ -21,6 +23,6 @@ conn.subscribe_measure! do |e|
 end
 
 while true do
-  conn.write!(BTWATTCH2::PAYLOAD_MONITORING)
+  conn.write!(BTWATTCH2::Payload.monitoring)
   sleep 1
 end

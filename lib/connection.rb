@@ -5,10 +5,6 @@ module BTWATTCH2
   C_TX = "6e400002-b5a3-f393-e0a9-e50e24dcca9e"
   C_RX = "6e400003-b5a3-f393-e0a9-e50e24dcca9e"
 
-  PAYLOAD_MONITORING = "\xAA\x00\x01\x08\xB3"
-  PAYLOAD_TURN_ON = "\xAA\x00\x02\xA7\x01\x59"
-  PAYLOAD_TURN_OFF = "\xAA\x00\x02\xA7\x00\xDC"
-
   class Connection
     def initialize(cli)
       @cli = cli
@@ -68,18 +64,18 @@ module BTWATTCH2
       end
 
       while true do
-        write!(PAYLOAD_MONITORING)
+        write!(Payload::monitoring)
         sleep @cli.interval
       end
     end
 
     def on
-      write!(PAYLOAD_TURN_ON)
+      write!(Payload::on)
       STDERR.puts "[INFO] Power on succeeded"
     end
 
     def off
-      write!(PAYLOAD_TURN_OFF)
+      write!(Payload::off)
       STDERR.puts "[INFO] Power off succeeded"
     end
   end
