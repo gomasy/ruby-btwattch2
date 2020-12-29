@@ -10,12 +10,8 @@ module BTWATTCH2
       def rtc(time)
         payload = [
           RTC_TIMER,
-          time.sec,
-          time.min,
-          time.hour,
-          time.day,
-          time.mon - 1,
-          time.year - 1900,
+          time.sec, time.min, time.hour,
+          time.day, time.mon - 1, time.year - 1900,
           time.wday
         ].flatten.pack("C*")
 

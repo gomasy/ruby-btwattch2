@@ -37,7 +37,6 @@ module BTWATTCH2
       else
         @conn.measure
       end
-
     rescue SignalException
       @conn.disconnect!
       exit
