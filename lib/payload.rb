@@ -24,7 +24,7 @@ module BTWATTCH2
           char(CMD_HEADER),
           char(size(payload)),
           char(payload),
-          char(BTWATTCH2::CRC8.crc8(payload))
+          char(CRC8.crc8(payload))
         ].flatten.pack("C*")
       end
 
