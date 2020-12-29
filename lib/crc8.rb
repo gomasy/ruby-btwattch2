@@ -14,7 +14,7 @@ module BTWATTCH2
       end
 
       def crc8(payload)
-        chr = payload.unpack("C*").inject(0x00) do |x, y|
+        chr = payload.inject(0x00) do |x, y|
           crc1(y & 0xff ^ x)
         end
 

@@ -1,15 +1,15 @@
 module BTWATTCH2
   class Payload
-    CMD_HEADER = "\xAA"
-    RTC_TIMER = "\x01"
-    MONITORING = "\x08"
-    TURN_ON = "\xA7\x01"
-    TURN_OFF = "\xA7\x00"
+    CMD_HEADER = [ 0xAA ]
+    RTC_TIMER = [ 0x01 ]
+    MONITORING = [ 0x08 ]
+    TURN_OFF = [ 0xA7, 0x00 ]
+    TURN_ON = [ 0xA7, 0x01 ]
 
     class << self
       def rtc(time)
         payload = [
-          RTC_TIMER.unpack("C*"),
+          RTC_TIMER,
           time.sec,
           time.min,
           time.hour,
@@ -36,9 +36,9 @@ module BTWATTCH2
 
       def generate(payload)
         [
-          char(CMD_HEADER),
+          CMD_HEADER,
           char(size(payload)),
-          char(payload),
+          payload,
           char(CRC8.crc8(payload))
         ].flatten.pack("C*")
       end
@@ -48,8 +48,8 @@ module BTWATTCH2
       end
 
       private
-      def char(payload)
-        payload.unpack("C*")
+      def char(chr)
+        chr.unpack("C*")
       end
     end
   end
