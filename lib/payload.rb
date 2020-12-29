@@ -29,7 +29,7 @@ module BTWATTCH2
       end
 
       def size(payload)
-        [payload.size].pack("N*")
+        [payload.size].pack("n*")
       end
 
       private
