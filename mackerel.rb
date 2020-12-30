@@ -19,10 +19,6 @@ conn.subscribe_measure! do |e|
   puts "#{@name}.voltage\t#{e[:voltage]}\t#{e[:timestamp].to_i}"
   puts "#{@name}.ampere\t#{e[:ampere]}\t#{e[:timestamp].to_i}"
   puts "#{@name}.wattage\t#{e[:wattage]}\t#{e[:timestamp].to_i}"
-  exit
-end
 
-while true
-  conn.write!(BTWATTCH2::Payload.monitoring)
-  sleep 1
+  exit
 end

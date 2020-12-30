@@ -5,6 +5,7 @@ module BTWATTCH2
     MONITORING = [ 0x08 ]
     TURN_OFF = [ 0xA7, 0x00 ]
     TURN_ON = [ 0xA7, 0x01 ]
+    BLINK_LED = [ 0x3E, 0x01, 0x02, 0x02, 0x0F ]
 
     class << self
       def rtc(time)
@@ -28,6 +29,10 @@ module BTWATTCH2
 
       def off
         generate(TURN_OFF)
+      end
+
+      def blink_led
+        generate(BLINK_LED)
       end
 
       def generate(payload)

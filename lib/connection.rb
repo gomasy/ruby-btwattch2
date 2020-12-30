@@ -24,23 +24,22 @@ module BTWATTCH2
     end
 
     def set_rtc!(time)
-      subscribe! do |e|
+      subscribe!(Payload::rtc(time)) do |e|
         if e.unpack("C*")[4] == 0x00
           STDERR.puts "[INFO] RTC set succeeded"
         end
-
         exit
-      end
-
-      while true
-        write!(Payload::rtc(time))
-        sleep 1
       end
     end
 
-    def subscribe!
+    def subscribe!(payload)
       @device.subscribe(SERVICE, C_RX) do |v|
         yield(v)
+      end
+
+      while true
+        write!(payload)
+        sleep @cli.interval
       end
     end
 
@@ -54,6 +53,11 @@ module BTWATTCH2
         if @buf.size == 31 && @buf[3] == "\x08"
           yield(read_measure)
         end
+      end
+
+      while true
+        write!(Payload::monitoring)
+        sleep @cli.interval
       end
     end
 
@@ -83,11 +87,6 @@ module BTWATTCH2
       subscribe_measure! do |e|
         puts "V = #{e[:voltage]}, A = #{e[:ampere]}, W = #{e[:wattage]}"
       end
-
-      while true
-        write!(Payload::monitoring)
-        sleep @cli.interval
-      end
     end
 
     def on
@@ -98,9 +97,18 @@ module BTWATTCH2
       power("off")
     end
 
+    def blink_led
+      subscribe!(Payload::blink_led) do |e|
+        if e.unpack("C*")[4] == 0x00
+          STDERR.puts "[INFO] Blink succeeded"
+        end
+        exit
+      end
+    end
+
     private
     def power(op)
-      subscribe! do |e|
+      subscribe!(eval("Payload::#{op}")) do |e|
         e = e.unpack("C*")
 
         if e[5] == 0x00
@@ -110,11 +118,6 @@ module BTWATTCH2
         end
 
         exit
-      end
-
-      while true
-        write!(eval("Payload::#{op}"))
-        sleep 1
       end
     end
 

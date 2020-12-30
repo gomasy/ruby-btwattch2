@@ -15,6 +15,7 @@ module BTWATTCH2
       @opt.on("--off", "Turn off the power switch."){|v|@switch="off"}
       @opt.on("--set-rtc <time>", "Specify the time to set to RTC."){|v|@time=Time.parse(v)}
       @opt.on("--set-rtc-now", "Set the current time of this system to RTC."){|v|@time=Time.now}
+      @opt.on("--test-led", "Blink the LED on the main unit."){|v|@switch="blink_led"}
       yield(@opt) if block_given?
 
       @opt.parse(ARGV)
