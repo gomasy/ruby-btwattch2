@@ -24,7 +24,7 @@ TBD
 また、[Mackerel](https://mackerel.io) のカスタムメトリック投稿に準拠したフォーマットで出力することも可能です。  
 注: メトリクスの epoch は本体の RTC をもとに設定されています。RTC は定期的に同期してください。（後述）
 
-    # ruby mackerel.rb --addr CB:DF:6B:12:34:56
+    # ruby mackerel.rb --addr CB:DF:6B:12:34:56 --metric-name wattchecker1
     wattchecker1.voltage    104.80763912200928      1609304963
     wattchecker1.ampere     1.120739296078682       1609304963
     wattchecker1.wattage    104.89565205574036      1609304963
