@@ -111,7 +111,7 @@ module BTWATTCH2
       subscribe!(eval("Payload::#{op}")) do |e|
         e = e.unpack("C*")
 
-        if e[5] == 0x00
+        if e[5] == (op == "on" ? 0x01 : 0x00) && e[4] == 0x00
           STDERR.puts "[INFO] Power #{op} succeeded"
         else
           STDERR.puts "[ERR] Power #{op} failed, CODE: #{e[4]}"
