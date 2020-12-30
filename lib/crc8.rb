@@ -7,7 +7,7 @@ module BTWATTCH2
         return crc if times >= 8
 
         if crc & 0x80 == 0x80
-          crc1((crc << 1 ^ POLYNOMIAL) & 0xff, times + 1)
+          crc1((crc << 1 ^ POLYNOMIAL) & 0xFF, times + 1)
         else
           crc1(crc << 1, times + 1)
         end
@@ -15,7 +15,7 @@ module BTWATTCH2
 
       def crc8(payload)
         chr = payload.inject(0x00) do |x, y|
-          crc1(y & 0xff ^ x)
+          crc1(y & 0xFF ^ x)
         end
 
         [chr].pack("C*")

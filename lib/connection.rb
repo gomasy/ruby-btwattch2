@@ -24,8 +24,24 @@ module BTWATTCH2
     end
 
     def set_rtc!(time)
-      write!(Payload::rtc(time))
-      STDERR.puts "[INFO] RTC set succeeded"
+      subscribe! do |e|
+        if e.unpack("C*")[4] == 0x00
+          STDERR.puts "[INFO] RTC set succeeded"
+        end
+
+        exit
+      end
+
+      while true
+        write!(Payload::rtc(time))
+        sleep 1
+      end
+    end
+
+    def subscribe!
+      @device.subscribe(SERVICE, C_RX) do |v|
+        yield(v)
+      end
     end
 
     def subscribe_measure!
@@ -68,23 +84,40 @@ module BTWATTCH2
         puts "V = #{e[:voltage]}, A = #{e[:ampere]}, W = #{e[:wattage]}"
       end
 
-      while true do
+      while true
         write!(Payload::monitoring)
         sleep @cli.interval
       end
     end
 
     def on
-      write!(Payload::on)
-      STDERR.puts "[INFO] Power on succeeded"
+      power("on")
     end
 
     def off
-      write!(Payload::off)
-      STDERR.puts "[INFO] Power off succeeded"
+      power("off")
     end
 
     private
+    def power(op)
+      subscribe! do |e|
+        e = e.unpack("C*")
+
+        if e[5] == 0x00
+          STDERR.puts "[INFO] Power #{op} succeeded"
+        else
+          STDERR.puts "[ERR] Power #{op} failed, CODE: #{e[4]}"
+        end
+
+        exit
+      end
+
+      while true
+        write!(eval("Payload::#{op}"))
+        sleep 1
+      end
+    end
+
     def ulong(payload)
       (8 - payload.size).times do
         payload += "\x00"

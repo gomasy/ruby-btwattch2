@@ -22,7 +22,7 @@ conn.subscribe_measure! do |e|
   exit
 end
 
-while true do
+while true
   conn.write!(BTWATTCH2::Payload.monitoring)
   sleep 1
 end
