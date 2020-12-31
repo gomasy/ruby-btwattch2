@@ -39,7 +39,7 @@ module BTWATTCH2
         end
         @buf += v
 
-        if @buf.size - 4 == @buf.unpack("n*")[0]
+        if @buf.size - 4 == @buf[1..2].unpack("n*")[0]
           yield(@buf)
         end
       end
