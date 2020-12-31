@@ -45,12 +45,12 @@ module BTWATTCH2
 
     def subscribe_measure!
       @device.subscribe(SERVICE, C_RX) do |v|
-        if !@buf.empty? && v.unpack("C*")[0] == 170
+        if !@buf.empty? && v.unpack("C*")[0] == 0xAA
           @buf = ""
         end
         @buf += v
 
-        if @buf.size == 31 && @buf[3] == "\x08"
+        if @buf.size == 31 && @buf.unpack("C*")[3] == 0x08
           yield(read_measure)
         end
       end
