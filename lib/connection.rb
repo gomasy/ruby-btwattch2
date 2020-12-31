@@ -34,7 +34,14 @@ module BTWATTCH2
 
     def subscribe!(payload)
       @device.subscribe(SERVICE, C_RX) do |v|
-        yield(v)
+        if !@buf.empty? && v.unpack("C*")[0] == 0xAA
+          @buf = ""
+        end
+        @buf += v
+
+        if @buf.size - 4 == @buf.unpack("n*")[0]
+          yield(@buf)
+        end
       end
 
       while true
@@ -44,20 +51,8 @@ module BTWATTCH2
     end
 
     def subscribe_measure!
-      @device.subscribe(SERVICE, C_RX) do |v|
-        if !@buf.empty? && v.unpack("C*")[0] == 0xAA
-          @buf = ""
-        end
-        @buf += v
-
-        if @buf.size == 31 && @buf.unpack("C*")[3] == 0x08
-          yield(read_measure)
-        end
-      end
-
-      while true
-        write!(Payload::monitoring)
-        sleep @cli.interval
+      subscribe!(Payload::monitoring) do |v|
+        yield(read_measure)
       end
     end
 
