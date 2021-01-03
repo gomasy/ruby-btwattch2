@@ -18,7 +18,7 @@ module BTWATTCH2
           crc1(y & 0xFF ^ x)
         end
 
-        [chr].pack("C*")
+        chr
       end
     end
   end

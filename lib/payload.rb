@@ -38,19 +38,14 @@ module BTWATTCH2
       def generate(payload)
         [
           CMD_HEADER,
-          char(size(payload)),
+          size(payload),
           payload,
-          char(CRC8.crc8(payload))
+          CRC8.crc8(payload)
         ].flatten.pack("C*")
       end
 
       def size(payload)
-        [payload.size].pack("n*")
-      end
-
-      private
-      def char(chr)
-        chr.unpack("C*")
+        [payload.size].pack("n*").unpack("C*")
       end
     end
   end
