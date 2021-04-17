@@ -4,7 +4,8 @@ GEM
     ble (1.0.0)
       concurrent-ruby
       ruby-dbus
-    concurrent-ruby (1.1.7)
+    concurrent-ruby (1.1.8)
+    rexml (3.2.5)
     ruby-dbus (0.16.0)
 
 PLATFORMS
@@ -12,6 +13,4 @@ PLATFORMS
 
 DEPENDENCIES
   ble
-
-BUNDLED WITH
-   2.2.2
+  rexml
